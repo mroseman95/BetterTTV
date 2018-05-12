@@ -1,6 +1,7 @@
 const $ = require('jquery');
 const watcher = require('../../watcher');
 const twitch = require('../../utils/twitch');
+const debug = require('../../utils/debug');
 
 const CHAT_ROOM_SELECTOR = '.chat-list';
 const CHAT_TEXT_AREA = '.chat-input textarea';
@@ -18,6 +19,10 @@ function clearSelection() {
 class DoubleClickMentionModule {
     constructor() {
         watcher.on('load.chat', () => this.load());
+        debug.log('test');
+        $(CHAT_TEXT_AREA).on('input propertychange', () => {
+            debug.log('text area changed');
+        });
     }
 
     load() {
@@ -34,7 +39,9 @@ class DoubleClickMentionModule {
             if (!$inputField.length) return;
             const input = $inputField.val().trim();
             const output = input ? `${input} @${user} ` : `@${user}, `;
-            $inputField.val(output).focus();
+            $inputField.focus();
+            $inputField.val(output).change();
+            $inputField.trigger({ type: 'keypress', which: 'a'.charCodeAt(0) });
         });
     }
 }
